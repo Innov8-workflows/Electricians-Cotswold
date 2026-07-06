@@ -415,16 +415,15 @@ footer{background:#0a0a0c;border-top:1px solid var(--line);padding:clamp(48px,7v
     <div class="sec-head">
       <div class="eyebrow"><span>Before and After</span></div>
       <h2>Transformations on video</h2>
-      <p>Short before and after clips of recent projects. Videos drop in with Batch 2.</p>
+      <p>Short before and after clips of recent projects.</p>
     </div>
 
     <div class="tf-row">
       <div class="tf-media">
-        <div class="tf-video">
-          <!-- BATCH 2: replace this .tf-placeholder with:
-               <video controls preload="none" playsinline poster="data:image/jpeg;base64,...">
-                 <source src="data:video/mp4;base64,..." type="video/mp4"></video> -->
-          <div class="tf-placeholder"><div class="tf-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div><small>Before and after video &middot; Batch 2</small></div>
+        <div class="tf-video" style="aspect-ratio:1660/1244">
+          <video class="tf-clip" autoplay muted loop playsinline preload="metadata">
+            <source src="before-after-01.mp4" type="video/mp4">
+          </video>
         </div>
       </div>
       <div class="tf-text">
@@ -437,8 +436,10 @@ footer{background:#0a0a0c;border-top:1px solid var(--line);padding:clamp(48px,7v
 
     <div class="tf-row">
       <div class="tf-media">
-        <div class="tf-video">
-          <div class="tf-placeholder"><div class="tf-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div><small>Before and after video &middot; Batch 2</small></div>
+        <div class="tf-video" style="aspect-ratio:1244/1660;max-width:420px;margin-inline:auto">
+          <video class="tf-clip" autoplay muted loop playsinline preload="metadata">
+            <source src="before-after-02.mp4" type="video/mp4">
+          </video>
         </div>
       </div>
       <div class="tf-text">
@@ -449,19 +450,6 @@ footer{background:#0a0a0c;border-top:1px solid var(--line);padding:clamp(48px,7v
       </div>
     </div>
 
-    <div class="tf-row">
-      <div class="tf-media">
-        <div class="tf-video">
-          <div class="tf-placeholder"><div class="tf-play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div><small>Before and after video &middot; Batch 2</small></div>
-        </div>
-      </div>
-      <div class="tf-text">
-        <span class="tf-tag">Project 03</span>
-        <h3>[PROJECT TITLE]</h3>
-        <p>[Short description of the project, the problem and the finished result.]</p>
-        <div class="tf-badge"><b>Location:</b> [Area, Cotswolds]</div>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -672,6 +660,22 @@ footer{background:#0a0a0c;border-top:1px solid var(--line);padding:clamp(48px,7v
       idx = (idx + 1) % slides.length;
       slides[idx].classList.add('active');
     }, 5000);
+  }
+
+  // before/after videos: play when scrolled into view, pause when out
+  var clips = Array.prototype.slice.call(document.querySelectorAll('.tf-clip'));
+  if(clips.length){
+    clips.forEach(function(v){ v.muted = true; });
+    if('IntersectionObserver' in window){
+      var vio = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          var v = entry.target;
+          if(entry.isIntersecting){ v.play().catch(function(){}); }
+          else { v.pause(); }
+        });
+      }, {threshold: 0.3});
+      clips.forEach(function(v){ vio.observe(v); });
+    }
   }
 
   // lightbox

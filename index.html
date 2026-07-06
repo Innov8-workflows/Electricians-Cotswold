@@ -177,22 +177,39 @@ header.scrolled .nav-logo img{height:38px}
 .why-item h4{font-size:1.05rem;margin-bottom:5px}
 .why-item p{color:var(--muted);font-size:.9rem}
 
-/* REVIEWS */
+/* REVIEWS (triple slider) */
 .reviews{background:var(--bg2);overflow:hidden}
-.rev-track{display:flex;gap:22px;width:max-content;will-change:transform}
-.rev-viewport{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
-  mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
-.rev-card{background:#fff;color:#1c1c1e;border-radius:16px;padding:26px;width:340px;flex:none;box-shadow:0 12px 30px rgba(0,0,0,.25)}
-.rev-stars{display:flex;gap:3px;margin-bottom:12px}
-.rev-stars svg{width:18px;height:18px;color:#f5b62a}
-.rev-card p{font-size:.94rem;line-height:1.6;color:#333;margin-bottom:18px}
-.rev-who{display:flex;align-items:center;gap:12px}
+.rev-top{display:flex;justify-content:center;margin-bottom:40px}
+.rev-score{display:flex;align-items:center;gap:14px;background:#fff;border-radius:16px;padding:14px 22px;box-shadow:0 12px 30px rgba(0,0,0,.25)}
+.rev-score>svg{width:34px;height:34px}
+.rs-num{font-family:'Barlow';font-weight:700;font-size:1.7rem;color:#111;line-height:1}
+.rev-score .stars{display:flex;gap:2px;color:#f5b62a}
+.rev-score .stars svg{width:16px;height:16px}
+.rev-score small{color:#7a7a7a;font-size:.84rem;line-height:1.35}
+.rev-viewport{overflow:hidden}
+.rev-track{display:flex;gap:24px;transition:transform .55s cubic-bezier(.22,.61,.36,1);will-change:transform}
+.rev-card{flex:0 0 calc((100% - 48px)/3);background:#fff;color:#1c1c1e;border-radius:16px;padding:26px;box-shadow:0 12px 30px rgba(0,0,0,.25);display:flex;flex-direction:column;min-height:250px}
+.rc-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
 .rev-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--gold-deep),var(--gold-bright));
-  color:#191100;display:flex;align-items:center;justify-content:center;font-family:'Barlow';font-weight:700;font-size:1rem}
-.rev-name{font-family:'Barlow';font-weight:600;font-size:.95rem;color:#111}
+  color:#191100;display:flex;align-items:center;justify-content:center;font-family:'Barlow';font-weight:700;font-size:1rem;flex:none}
+.rev-name{font-family:'Barlow';font-weight:600;font-size:.95rem;color:#111;line-height:1.2}
 .rev-meta{font-size:.76rem;color:#7a7a7a}
-.rev-verified{margin-left:auto;font-size:.7rem;color:#3a7d44;display:flex;align-items:center;gap:4px;font-weight:600}
-.rev-verified svg{width:14px;height:14px}
+.rc-g{margin-left:auto}
+.rc-g svg{width:22px;height:22px}
+.rev-stars{display:flex;gap:3px;margin-bottom:12px;color:#f5b62a}
+.rev-stars svg{width:18px;height:18px}
+.rev-card p{font-size:.94rem;line-height:1.6;color:#333;margin:0}
+.rc-loc{margin-top:auto;padding-top:16px;color:#7a7a7a;font-size:.8rem;display:flex;align-items:center;gap:6px}
+.rc-loc svg{width:15px;height:15px;color:var(--gold-deep)}
+.rev-controls{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:34px}
+.rev-arrow{width:50px;height:50px;border-radius:50%;border:1px solid var(--gold-deep);background:transparent;color:var(--gold);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.25s}
+.rev-arrow:hover{background:var(--gold);color:#191100}
+.rev-arrow svg{width:22px;height:22px}
+.rev-dots{display:flex;gap:8px}
+.rev-dot{width:9px;height:9px;border-radius:50%;background:rgba(224,192,128,.25);border:0;cursor:pointer;padding:0;transition:.3s}
+.rev-dot.active{background:var(--gold);width:26px;border-radius:5px}
+@media(max-width:980px){.rev-card{flex-basis:calc((100% - 24px)/2)}}
+@media(max-width:660px){.rev-card{flex-basis:100%}}
 
 /* ABOUT */
 .about-grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:clamp(28px,5vw,60px);align-items:center}
@@ -491,23 +508,76 @@ footer{background:#0a0a0c;border-top:1px solid var(--line);padding:clamp(48px,7v
   </div>
 </section>
 
-<!-- ============ REVIEWS (autoscroll, swipeable) ============ -->
+<!-- ============ REVIEWS (triple slider, autoplay) ============ -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="ic-google" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571.001-.001.002-.001.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></symbol>
+  <symbol id="ic-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.9 5.88 6.49.94-4.7 4.58 1.11 6.46L12 17.9l-5.8 3.05 1.1-6.46-4.69-4.58 6.49-.94L12 2.5Z"/></symbol>
+  <symbol id="ic-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="ic-chev-l" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></symbol>
+  <symbol id="ic-chev-r" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></symbol>
+</svg>
 <section class="section reviews" id="reviews">
   <div class="container">
     <div class="sec-head">
-      <div class="eyebrow"><span>Reviews</span></div>
-      <h2>What customers say</h2>
+      <div class="eyebrow"><span>Don't Just Take Our Word For It</span></div>
+      <h2>What our customers say</h2>
       <p>Placeholder reviews shown. Send your real Google reviews and we will swap them in.</p>
     </div>
-  </div>
-  <!-- PLACEHOLDER REVIEWS - replace text, names and ratings with real Google reviews -->
-  <div class="rev-viewport" id="revViewport">
-    <div class="rev-track" id="revTrack">
-      <div class="rev-card"><div class="rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p>[Placeholder review] Really pleased with the work from start to finish. Turned up when they said, tidy throughout and the finish is spot on.</p><div class="rev-who"><div class="rev-av">JH</div><div><div class="rev-name">[Name]</div><div class="rev-meta">Cotswolds</div></div><div class="rev-verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Verified</div></div></div>
-      <div class="rev-card"><div class="rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p>[Placeholder review] Sorted our fuse board and a few extra sockets. Clear quote, fair price and everything left clean. Would recommend.</p><div class="rev-who"><div class="rev-av">SW</div><div><div class="rev-name">[Name]</div><div class="rev-meta">Cotswolds</div></div><div class="rev-verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Verified</div></div></div>
-      <div class="rev-card"><div class="rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p>[Placeholder review] The feature lighting has completely changed the room. Great advice, brilliant workmanship and a lovely job.</p><div class="rev-who"><div class="rev-av">MD</div><div><div class="rev-name">[Name]</div><div class="rev-meta">Cotswolds</div></div><div class="rev-verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Verified</div></div></div>
-      <div class="rev-card"><div class="rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p>[Placeholder review] Prompt, professional and easy to deal with. Explained everything clearly and did exactly what was agreed.</p><div class="rev-who"><div class="rev-av">RT</div><div><div class="rev-name">[Name]</div><div class="rev-meta">Cotswolds</div></div><div class="rev-verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Verified</div></div></div>
-      <div class="rev-card"><div class="rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><p>[Placeholder review] Outdoor lights fitted and they look superb at night. Reliable, friendly and great value. Highly recommend.</p><div class="rev-who"><div class="rev-av">LP</div><div><div class="rev-name">[Name]</div><div class="rev-meta">Cotswolds</div></div><div class="rev-verified"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Verified</div></div></div>
+    <div class="rev-top">
+      <div class="rev-score">
+        <svg><use href="#ic-google"/></svg>
+        <div>
+          <span class="rs-num">5.0</span>
+          <div class="stars"><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg></div>
+        </div>
+        <small>Based on [XX]+<br>Google reviews</small>
+      </div>
+    </div>
+    <!-- PLACEHOLDER REVIEWS - replace text, names, times and locations with real Google reviews -->
+    <div class="rev-viewport" id="revViewport">
+      <div class="rev-track" id="revTrack">
+        <article class="rev-card">
+          <div class="rc-head"><div class="rev-av">JH</div><div><div class="rev-name">[Name]</div><div class="rev-meta">2 weeks ago</div></div><span class="rc-g"><svg><use href="#ic-google"/></svg></span></div>
+          <div class="rev-stars"><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg></div>
+          <p>"[Placeholder review] Really pleased with the work from start to finish. Turned up when they said, tidy throughout and the finish is spot on."</p>
+          <div class="rc-loc"><svg><use href="#ic-pin"/></svg> Cotswolds</div>
+        </article>
+        <article class="rev-card">
+          <div class="rc-head"><div class="rev-av">SW</div><div><div class="rev-name">[Name]</div><div class="rev-meta">1 month ago</div></div><span class="rc-g"><svg><use href="#ic-google"/></svg></span></div>
+          <div class="rev-stars"><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg></div>
+          <p>"[Placeholder review] Sorted our fuse board and a few extra sockets. Clear quote, fair price and everything left clean. Would recommend."</p>
+          <div class="rc-loc"><svg><use href="#ic-pin"/></svg> Cotswolds</div>
+        </article>
+        <article class="rev-card">
+          <div class="rc-head"><div class="rev-av">MD</div><div><div class="rev-name">[Name]</div><div class="rev-meta">1 month ago</div></div><span class="rc-g"><svg><use href="#ic-google"/></svg></span></div>
+          <div class="rev-stars"><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg></div>
+          <p>"[Placeholder review] The feature lighting has completely changed the room. Great advice, brilliant workmanship and a lovely job."</p>
+          <div class="rc-loc"><svg><use href="#ic-pin"/></svg> Cotswolds</div>
+        </article>
+        <article class="rev-card">
+          <div class="rc-head"><div class="rev-av">RT</div><div><div class="rev-name">[Name]</div><div class="rev-meta">2 months ago</div></div><span class="rc-g"><svg><use href="#ic-google"/></svg></span></div>
+          <div class="rev-stars"><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg></div>
+          <p>"[Placeholder review] Prompt, professional and easy to deal with. Explained everything clearly and did exactly what was agreed."</p>
+          <div class="rc-loc"><svg><use href="#ic-pin"/></svg> Cotswolds</div>
+        </article>
+        <article class="rev-card">
+          <div class="rc-head"><div class="rev-av">LP</div><div><div class="rev-name">[Name]</div><div class="rev-meta">3 months ago</div></div><span class="rc-g"><svg><use href="#ic-google"/></svg></span></div>
+          <div class="rev-stars"><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg></div>
+          <p>"[Placeholder review] Outdoor lights fitted and they look superb at night. Reliable, friendly and great value. Highly recommend."</p>
+          <div class="rc-loc"><svg><use href="#ic-pin"/></svg> Cotswolds</div>
+        </article>
+        <article class="rev-card">
+          <div class="rc-head"><div class="rev-av">AB</div><div><div class="rev-name">[Name]</div><div class="rev-meta">3 months ago</div></div><span class="rc-g"><svg><use href="#ic-google"/></svg></span></div>
+          <div class="rev-stars"><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg><svg><use href="#ic-star"/></svg></div>
+          <p>"[Placeholder review] Fitted our EV charger quickly and neatly, then talked us through the app before leaving. First class service."</p>
+          <div class="rc-loc"><svg><use href="#ic-pin"/></svg> Cotswolds</div>
+        </article>
+      </div>
+    </div>
+    <div class="rev-controls">
+      <button class="rev-arrow" id="revPrev" aria-label="Previous reviews"><svg><use href="#ic-chev-l"/></svg></button>
+      <div class="rev-dots" id="revDots"></div>
+      <button class="rev-arrow" id="revNext" aria-label="Next reviews"><svg><use href="#ic-chev-r"/></svg></button>
     </div>
   </div>
 </section>
@@ -691,35 +761,51 @@ footer{background:#0a0a0c;border-top:1px solid var(--line);padding:clamp(48px,7v
   lb.addEventListener('click', function(e){ if(e.target === lb) closeLb(); });
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeLb(); });
 
-  // reviews: seamless autoscroll + drag/swipe
+  // reviews: triple slider (autoplay + arrows + dots + swipe)
   var vp = document.getElementById('revViewport'),
-      track = document.getElementById('revTrack');
-  // duplicate cards for seamless loop
-  track.innerHTML += track.innerHTML;
-  var pos = 0, speed = 0.5, paused = false, dragging = false, startX = 0, startPos = 0;
-  var half = 0;
-  function measure(){ half = track.scrollWidth / 2; }
-  measure(); window.addEventListener('resize', measure);
-  function loop(){
-    if(!paused && !dragging){
-      pos -= speed;
-      if(half && -pos >= half) pos += half;
-      track.style.transform = 'translateX(' + pos + 'px)';
-    }
-    requestAnimationFrame(loop);
+      track = document.getElementById('revTrack'),
+      cards = Array.prototype.slice.call(track.children),
+      dotsWrap = document.getElementById('revDots'),
+      revIdx = 0, revStep = 0, revPerView = 1, revMax = 0, revTimer = null;
+  function revMeasure(){
+    revStep = cards.length > 1 ? (cards[1].getBoundingClientRect().left - cards[0].getBoundingClientRect().left) : cards[0].offsetWidth;
+    revPerView = Math.max(1, Math.round(vp.clientWidth / revStep));
+    revMax = Math.max(0, cards.length - revPerView);
+    revIdx = Math.min(revIdx, revMax);
+    revDotsBuild(); revRender();
   }
-  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches) requestAnimationFrame(loop);
-  vp.addEventListener('mouseenter', function(){ paused = true; });
-  vp.addEventListener('mouseleave', function(){ paused = false; });
-  function down(x){ dragging = true; startX = x; startPos = pos; }
-  function move(x){ if(!dragging) return; pos = startPos + (x - startX); if(half){ if(-pos >= half) pos += half; if(pos > 0) pos -= half; } track.style.transform = 'translateX(' + pos + 'px)'; }
-  function up(){ dragging = false; }
-  vp.addEventListener('touchstart', function(e){ down(e.touches[0].clientX); }, {passive:true});
-  vp.addEventListener('touchmove', function(e){ move(e.touches[0].clientX); }, {passive:true});
-  vp.addEventListener('touchend', up);
-  vp.addEventListener('mousedown', function(e){ down(e.clientX); e.preventDefault(); });
-  window.addEventListener('mousemove', function(e){ move(e.clientX); });
-  window.addEventListener('mouseup', up);
+  function revDotsBuild(){
+    dotsWrap.innerHTML = '';
+    for(var n = 0; n <= revMax; n++){
+      (function(n){
+        var d = document.createElement('button');
+        d.className = 'rev-dot' + (n === revIdx ? ' active' : '');
+        d.setAttribute('aria-label', 'Go to review group ' + (n + 1));
+        d.addEventListener('click', function(){ revIdx = n; revRender(); revRestart(); });
+        dotsWrap.appendChild(d);
+      })(n);
+    }
+  }
+  function revRender(){
+    track.style.transform = 'translateX(' + (-revIdx * revStep) + 'px)';
+    Array.prototype.forEach.call(dotsWrap.children, function(d, n){ d.classList.toggle('active', n === revIdx); });
+  }
+  function revGo(n){ revIdx = n > revMax ? 0 : (n < 0 ? revMax : n); revRender(); }
+  document.getElementById('revNext').addEventListener('click', function(){ revGo(revIdx + 1); revRestart(); });
+  document.getElementById('revPrev').addEventListener('click', function(){ revGo(revIdx - 1); revRestart(); });
+  function revStart(){ revTimer = setInterval(function(){ revGo(revIdx + 1); }, 4500); }
+  function revRestart(){ clearInterval(revTimer); revStart(); }
+  // swipe / drag
+  var revDown = false, revStartX = 0, revDragged = 0;
+  vp.addEventListener('pointerdown', function(e){ revDown = true; revStartX = e.clientX; revDragged = 0; clearInterval(revTimer); track.style.transition = 'none'; });
+  window.addEventListener('pointermove', function(e){ if(!revDown) return; revDragged = e.clientX - revStartX; track.style.transform = 'translateX(' + (-revIdx * revStep + revDragged) + 'px)'; });
+  window.addEventListener('pointerup', function(){
+    if(!revDown) return; revDown = false; track.style.transition = '';
+    if(Math.abs(revDragged) > revStep * 0.22) revGo(revIdx + (revDragged < 0 ? 1 : -1)); else revRender();
+    revStart();
+  });
+  window.addEventListener('resize', revMeasure);
+  revMeasure(); revStart();
 
   // contact form -> WhatsApp
   document.getElementById('sendBtn').addEventListener('click', function(){
